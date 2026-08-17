@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Código C++</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .code-font {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid me-2 fa-code text-blue-400 text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide text-white">Quiz de Código C++ Base </h1>
+            </div>
+                <div id="score-display" class="bg-slate-700 px-4 py-1.5 rounded-full text-sm font-semibold text-blue-300 border border-slate-600">
+                    Puntuación: <span id="current-score">0</span> / 100 pts
+                </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- Quiz Container -->
+        <div id="quiz-card" class="bg-slate-800 rounded-xl border border-slate-700 shadow-2xl overflow-hidden p-6">
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-700 h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Header -->
+            <div class="mb-4">
+                <span id="question-number" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800/50 px-3 py-1 rounded-full">Pregunta 1</span>
+                <h2 id="question-title" class="text-lg sm:text-xl font-semibold text-white mt-3"></h2>
+                <p id="question-desc" class="text-slate-400 text-sm mt-1"></p>
+            </div>
+
+            <!-- Code Input Area -->
+            <div class="mt-4">
+                <label class="block text-xs font-medium text-slate-400 mb-2">Escribe exactamente las líneas de código C++ requeridas:</label>
+                <textarea id="user-code" rows="7" spellcheck="false" class="w-full bg-slate-950 text-emerald-400 code-font p-4 rounded-lg border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-y text-sm leading-relaxed" placeholder="// Escribe tu código C++ aquí..."></textarea>
+            </div>
+
+            <!-- Feedback Box -->
+            <div id="feedback" class="hidden mt-4 p-4 rounded-lg text-sm border"></div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex flex-wrap justify-between items-center gap-3">
+                <button id="hint-btn" onclick="toggleHint()" class="text-slate-400 hover:text-slate-200 text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-regular fa-lightbulb text-yellow-400"></i> Pista
+                </button>
+                <div class="flex gap-3 ml-auto">
+                    <button id="check-btn" onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-lg shadow-blue-600/20">
+                        Comprobar Código
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-lg shadow-emerald-600/20">
+                        Siguiente Pregunta <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hint Display -->
+            <div id="hint-box" class="hidden mt-3 p-3 bg-slate-900/80 border border-yellow-500/30 rounded-lg text-xs text-yellow-300"></div>
+        </div>
+
+        <!-- Completion Card -->
+        <div id="result-card" class="hidden bg-slate-800 rounded-xl border border-slate-700 shadow-2xl p-8 text-center">
+            <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/40 text-2xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">¡Quiz Completado!</h2>
+            <p class="text-slate-400 text-sm mb-6">Has demostrado tus conocimientos sobre la estructura base de C++.</p>
+            <div class="text-3xl font-extrabold text-blue-400 mb-6" id="final-score">0 / 0</div>
+            <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition shadow-lg shadow-blue-600/20">
+                Reiniciar Quiz
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-800">
+        Quiz interactivo de código C++ — Colegio Arrieta - Programación — 2026.
+    </footer>
+
+    <script>
+        const questions = [
+        {
+            title: "Estructura Básica Completa",
+            description: "Escribe el código mínimo de un programa en C++ que incluya la biblioteca de entrada/salida (iostream), el espacio de nombres standard global (std), la función principal (main) y el retorno correcto.",
+            hint: "Debe incluir #include <iostream>, using namespace std;, int main() { y return 0; }",
+            expectedKeywords: ["#include", "<iostream>", "using", "namespace", "std;", "int", "main", "return", "0"],
+            solution: `#include <iostream>\nusing namespace std;\nint main() {\n    return 0;\n}`
+        },
+        {
+            title: "Lectura y Salida de Datos",
+            description: "Declara una variable entera llamada 'edad', lee su valor desde el teclado y luego muestra en pantalla el texto 'Edad: ' seguido del valor ingresado con un salto de línea.",
+            hint: "Declara 'int edad;', usa 'cin >> edad;' para leer y 'cout << ... << endl;' para mostrar.",
+            expectedKeywords: ["int", "edad;", "cin", ">>", "cout", "<<", "endl;"],
+            solution: `int edad;\ncin >> edad;\ncout << "Edad: " << edad << endl;`
+        },
+        {
+            title: "Declaración de Variables de Distintos Tipos",
+            description: "Declara tres variables: una cadena de texto llamada 'nombre' con el valor 'Ana', un decimal de precisión simple 'altura' con el valor 1.75, y un lógico 'esMayor' con el valor true.",
+            hint: "Usa los tipos 'string', 'float' (con f al final del número) y 'bool'.",
+            expectedKeywords: ["string", "nombre", "\"Ana\"", "float", "altura", "1.75f", "bool", "esMayor", "true"],
+            solution: `string nombre = "Ana";\nfloat altura = 1.75f;\nbool esMayor = true;`
+        },
+        {
+            title: "Uso de Comentarios",
+            description: "Escribe un comentario de una sola línea con la palabra 'Inicio' y un comentario de varias líneas que contenga 'Bloque' en una línea y 'Fin' en otra.",
+            hint: "Usa '//' para comentarios de una línea y '/*' junto con '*/' para multilínea.",
+            expectedKeywords: ["//", "Inicio", "/*", "Bloque", "Fin", "*/"],
+            solution: `// Inicio\n/*\nBloque\nFin\n*/`
+        },
+        {
+            title: "Cálculo del Residuo de una División",
+            description: "Escribe una instrucción que calcule el residuo de dividir la variable entera 'a' entre la variable 'b' y almacene el resultado en una nueva variable entera llamada 'residuo'.",
+            hint: "Usa el operador aritmético '%' para obtener el residuo.",
+            expectedKeywords: ["int", "residuo", "=", "a", "%", "b;"],
+            solution: `int residuo = a % b;`
+        },
+        {
+            title: "Comparación de Igualdad",
+            description: "Escribe una instrucción utilizando 'cout' para comparar si las variables enteras 'a' y 'b' son iguales e imprimir el resultado (1 para verdadero, 0 para falso) seguido de un salto de línea.",
+            hint: "Utiliza el operador relacional '==' dentro de paréntesis: (a == b).",
+            expectedKeywords: ["cout", "<<", "(a", "==", "b)", "endl;"],
+            solution: `cout << (a == b) << endl;`
+        },
+        {
+            title: "Estructura Condicional Simple (if)",
+            description: "Escribe un condicional simple que verifique si la variable decimal 'temp' es mayor o igual a 35. Si se cumple, debe mostrar en pantalla el mensaje 'Peligro'.",
+            hint: "Usa 'if' con la condición entre paréntesis y 'cout' para el mensaje.",
+            expectedKeywords: ["if", "(temp", ">=", "35)", "cout", "Peligro"],
+            solution: `if (temp >= 35) {\n    cout << "Peligro" << endl;\n}`
+        },
+        {
+            title: "Estructura Condicional Doble (if-else)",
+            description: "Escribe una estructura condicional que determine si la variable entera 'num' es par (su residuo al dividir entre 2 es 0). Si es par, muestra 'PAR'; de lo contrario, muestra 'IMPAR'.",
+            hint: "Usa 'if (num % 2 == 0)' para verificar la condición, seguido de 'else'.",
+            expectedKeywords: ["if", "num", "%", "2", "==", "0", "cout", "PAR", "else", "IMPAR"],
+            solution: `if (num % 2 == 0) {\n    cout << "PAR" << endl;\n} else {\n    cout << "IMPAR" << endl;\n}`
+        },
+        {
+            title: "Estructura Condicional Múltiple (if - else if)",
+            description: "Clasifica la variable entera 'edad' de la siguiente manera: si es menor de 12, muestra 'Niño'; si es menor o igual a 17, muestra 'Adolescente'; en cualquier otro caso, muestra 'Adulto'.",
+            hint: "Usa un bloque 'if', 'else if' y finaliza con 'else'.",
+            expectedKeywords: ["if", "edad", "<", "12", "else if", "<=", "17", "else", "Adulto"],
+            solution: `if (edad < 12) {\n    cout << "Niño" << endl;\n} else if (edad <= 17) {\n    cout << "Adolescente" << endl;\n} else {\n    cout << "Adulto" << endl;\n}`
+        },
+        {
+            title: "Hola Mundo en C++",
+            description: "Escribe un programa C++ completo que incluya la biblioteca iostream, declare el uso de namespace std y muestre exactamente el mensaje 'Hola Mundo' seguido de un salto de línea dentro de la función main.",
+            hint: "Usa #include <iostream>, using namespace std;, cout << \"Hola Mundo\" << endl; y return 0; en la función main.",
+            expectedKeywords: ["#include", "<iostream>", "using", "namespace", "std;", "int", "main()", "cout", "Hola Mundo", "endl;"],
+            solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hola Mundo" << endl;\n    return 0;\n}`
+        }
+    ];
+
+  let currentQuestionIndex = 0;
+    let score = 0;
+
+    const userCodeInput = document.getElementById('user-code');
+    const feedbackBox = document.getElementById('feedback');
+    const hintBox = document.getElementById('hint-box');
+    const checkBtn = document.getElementById('check-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Función auxiliar para convertir el número de aciertos a escala sobre 100
+    function getPuntos() {
+        if (questions.length === 0) return 0;
+        return Math.round((score / questions.length) * 100);
+    }
+
+    // Función para convertir símbolos de código en texto seguro para HTML
+    function escaparHTML(texto) {
+        return texto
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-number').innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+        document.getElementById('question-title').innerText = q.title;
+        document.getElementById('question-desc').innerText = q.description;
+        document.getElementById('current-score').innerText = getPuntos();
+
+        // Limpieza de interfaz para la nueva pregunta
+        userCodeInput.value = '';
+        feedbackBox.innerHTML = '';
+        feedbackBox.classList.add('hidden');
+        hintBox.classList.add('hidden');
+        
+        checkBtn.classList.remove('hidden');
+        nextBtn.classList.add('hidden');
+
+        const progress = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function normalizeCode(str) {
+        return str.replace(/\s+/g, ' ').trim();
+    }
+
+    function checkAnswer() {
+        const userCode = userCodeInput.value;
+        const q = questions[currentQuestionIndex];
+        
+        const normalizedUser = normalizeCode(userCode);
+        const normalizedSol = normalizeCode(q.solution);
+
+        const missingKeywords = q.expectedKeywords.filter(kw => !userCode.includes(kw));
+
+        feedbackBox.classList.remove('hidden');
+
+        const solucionEscapada = escaparHTML(q.solution);
+        const palabrasFaltantesEscapadas = missingKeywords.map(escaparHTML).join(', ');
+
+        if (missingKeywords.length === 0 || normalizedUser === normalizedSol) {
+            score++;
+            document.getElementById('current-score').innerText = getPuntos();
+            feedbackBox.className = "mt-4 p-4 rounded-lg text-sm border bg-emerald-950/60 border-emerald-700 text-emerald-300";
+            feedbackBox.innerHTML = `
+                <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> ¡Excelente! El código es correcto.</div>
+                <pre class="mt-2 p-2 bg-slate-950 rounded border border-emerald-800 text-emerald-400 code-font text-xs">${solucionEscapada}</pre>
+            `;
+        } else {
+            feedbackBox.className = "mt-4 p-4 rounded-lg text-sm border bg-rose-950/60 border-rose-700 text-rose-300";
+            feedbackBox.innerHTML = `
+                <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Faltan elementos clave en tu código.</div>
+                <p class="mt-1 text-xs text-rose-300/80">Asegúrate de incluir: <code class="bg-slate-900 px-1 py-0.5 rounded border border-rose-800">${palabrasFaltantesEscapadas}</code></p>
+                <div class="mt-2 font-semibold text-xs text-slate-300">Solución de referencia:</div>
+                <pre class="mt-1 p-2 bg-slate-950 rounded border border-rose-800/60 text-slate-300 code-font text-xs">${solucionEscapada}</pre>
+            `;
+        }
+
+        checkBtn.classList.add('hidden');
+        nextBtn.classList.remove('hidden');
+    }
+
+    function toggleHint() {
+        const q = questions[currentQuestionIndex];
+        hintBox.innerText = q.hint;
+        hintBox.classList.toggle('hidden');
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('result-card').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${getPuntos()} / 100 pts`;
+        document.getElementById('progress-bar').style.width = '100%';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('result-card').classList.add('hidden');
+        document.getElementById('quiz-card').classList.remove('hidden');
+        loadQuestion();
+    }
+
+    // Inicializa el quiz al cargar la página
+    loadQuestion();
+</script>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Código C++</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .code-font {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid me-2 fa-code text-blue-400 text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide text-white">Quiz de Código C++ Base </h1>
+            </div>
+                <div id="score-display" class="bg-slate-700 px-4 py-1.5 rounded-full text-sm font-semibold text-blue-300 border border-slate-600">
+                    Puntuación: <span id="current-score">0</span> / 100 pts
+                </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- Quiz Container -->
+        <div id="quiz-card" class="bg-slate-800 rounded-xl border border-slate-700 shadow-2xl overflow-hidden p-6">
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-700 h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Header -->
+            <div class="mb-4">
+                <span id="question-number" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800/50 px-3 py-1 rounded-full">Pregunta 1</span>
+                <h2 id="question-title" class="text-lg sm:text-xl font-semibold text-white mt-3"></h2>
+                <p id="question-desc" class="text-slate-400 text-sm mt-1"></p>
+            </div>
+
+            <!-- Code Input Area -->
+            <div class="mt-4">
+                <label class="block text-xs font-medium text-slate-400 mb-2">Escribe exactamente las líneas de código C++ requeridas:</label>
+                <textarea id="user-code" rows="7" spellcheck="false" class="w-full bg-slate-950 text-emerald-400 code-font p-4 rounded-lg border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-y text-sm leading-relaxed" placeholder="// Escribe tu código C++ aquí..."></textarea>
+            </div>
+
+            <!-- Feedback Box -->
+            <div id="feedback" class="hidden mt-4 p-4 rounded-lg text-sm border"></div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex flex-wrap justify-between items-center gap-3">
+                <button id="hint-btn" onclick="toggleHint()" class="text-slate-400 hover:text-slate-200 text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-regular fa-lightbulb text-yellow-400"></i> Pista
+                </button>
+                <div class="flex gap-3 ml-auto">
+                    <button id="check-btn" onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-lg shadow-blue-600/20">
+                        Comprobar Código
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-lg shadow-emerald-600/20">
+                        Siguiente Pregunta <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hint Display -->
+            <div id="hint-box" class="hidden mt-3 p-3 bg-slate-900/80 border border-yellow-500/30 rounded-lg text-xs text-yellow-300"></div>
+        </div>
+
+        <!-- Completion Card -->
+        <div id="result-card" class="hidden bg-slate-800 rounded-xl border border-slate-700 shadow-2xl p-8 text-center">
+            <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/40 text-2xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">¡Quiz Completado!</h2>
+            <p class="text-slate-400 text-sm mb-6">Has demostrado tus conocimientos sobre la estructura base de C++.</p>
+            <div class="text-3xl font-extrabold text-blue-400 mb-6" id="final-score">0 / 0</div>
+            <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition shadow-lg shadow-blue-600/20">
+                Reiniciar Quiz
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-800">
+        Quiz interactivo de código C++ — Colegio Arrieta - Programación — 2026.
+    </footer>
+
+    <script>
+const questions = [
+    // --- 2DO SECUNDARIA (3 Preguntas Ultrabásicas de Repaso Esencial) ---
+    {
+        title: "Estructura Base en C++",
+        description: "Escribe la estructura mínima obligatoria de cualquier programa en C++ utilizando la biblioteca estándar de entrada y salida, declarando el espacio de nombres global e incluyendo la función de inicio con retorno exitoso.",
+        hint: "Debe contener #include <iostream>, using namespace std;, int main() { y return 0; }.",
+        expectedKeywords: ["#include", "<iostream>", "using", "namespace", "std;", "int", "main()", "return", "0"],
+        solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    return 0;\n}`
+    },
+    {
+        title: "Salida de Mensaje Simple",
+        description: "Escribe la línea de código necesaria dentro del main para mostrar en pantalla el mensaje 'Hola Bolivia' seguido de un salto de línea.",
+        hint: "Usa el flujo de salida 'cout', los operadores '<<' y el salto 'endl;'.",
+        expectedKeywords: ["cout", "<<", "\"Hola Bolivia\"", "endl;"],
+        solution: `cout << "Hola Bolivia" << endl;`
+    },
+    {
+        title: "Lectura y Salida de Datos",
+        description: "Declara una variable entera llamada 'edad', lee su valor desde el teclado y luego muestra en pantalla el texto 'Edad: ' seguido del valor ingresado con un salto de línea.",
+        hint: "Declara 'int edad;', usa 'cin >> edad;' para leer y 'cout << ... << endl;' para mostrar.",
+        expectedKeywords: ["int", "edad;", "cin", ">>", "cout", "<<", "endl;"],
+        solution: `int edad;\ncin >> edad;\ncout << "Edad: " << edad << endl;`
+    },
+
+    // --- 4TO SECUNDARIA (7 Preguntas de Unidad 2 y Unidad 4) ---
+    {
+        title: "Cálculo de Residuos (Operador Módulo)",
+        description: "Escribe un programa que lea un número entero 'n' y calcule su residuo al dividirlo entre 10 para obtener su último dígito. Si necesitas repasar paso a paso cómo se realiza la división larga y cómo se halla el residuo antes de programar, puedes practicar en: https://divisionlarga.com/",
+        hint: "Usa el operador módulo '%' en la instrucción 'int residuo = n % 10;' para extraer el último dígito.",
+        expectedKeywords: ["int", "n", "cin", ">>", "int", "residuo", "=", "n", "%", "10", "cout", "<<", "https://divisionlarga.com/"],
+        solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Practica divisiones largas en https://divisionlarga.com/\n    int n;\n    cin >> n;\n    int residuo = n % 10;\n    cout << residuo << endl;\n    return 0;\n}`
+    },
+    {
+        title: "Operador Ternario Simplificado",
+        description: "Escribe una sola línea de código utilizando el operador ternario (? :) que evalúe si la variable entera 'nota' es mayor o igual a 51. Si es verdadero, debe devolver 'Aprobado'; si es falso, 'Reprobado'. Envía el resultado directo a 'cout'.",
+        hint: "La sintaxis es: cout << (condicion ? valor_verdadero : valor_falso);",
+        expectedKeywords: ["cout", "<<", "nota", ">=", "51", "?", "\"Aprobado\"", ":", "\"Reprobado\""],
+        solution: `cout << (nota >= 51 ? "Aprobado" : "Reprobado");`
+    },
+    {
+        title: "Validación de Calificaciones con AND (&&)",
+        description: "Escribe una estructura condicional (if-else) para validar si la variable entera 'nota' es una calificación válida (es decir, mayor o igual a 51 Y menor o igual a 100). Si se cumple, muestra 'Aprobado Excelente'; de lo contrario, muestra 'No aplica'.",
+        hint: "Usa el operador lógico '&&' para unir ambas condiciones dentro del 'if'.",
+        expectedKeywords: ["if", "nota", ">=", "51", "&&", "<=", "100", "cout", "Aprobado Excelente", "else", "No aplica"],
+        solution: `if (nota >= 51 && nota <= 100) {\n    cout << "Aprobado Excelente" << endl;\n} else {\n    cout << "No aplica" << endl;\n}`
+    },
+    {
+        title: "Bucle para Contar Pares",
+        description: "Escribe un bucle 'for' que comience en 1, se ejecute mientras la variable de control 'i' sea menor o igual a un número entero 'N' ingresado, y que en cada iteración muestre el número 'i' únicamente si este es par.",
+        hint: "Usa 'if (i % 2 == 0)' dentro de un bucle 'for (int i = 1; i <= N; i++)' para filtrar los pares.",
+        expectedKeywords: ["for", "int", "i", "=", "1", "i", "<=", "N", "i++", "if", "i", "%", "2", "==", "0", "cout"],
+        solution: `for (int i = 1; i <= N; i++) {\n    if (i % 2 == 0) {\n        cout << i << endl;\n    }\n}`
+    },
+    {
+        title: "Eliminación del Último Dígito (División Entera)",
+        description: "Escribe un programa que lea un número entero 'n' y utilice la división entera para eliminar su último dígito, mostrando el nuevo valor en pantalla.",
+        hint: "Al dividir un entero 'n' entre 10 en C++ ('n / 10'), los decimales se truncan automáticamente perdiendo el último dígito.",
+        expectedKeywords: ["int", "n", "cin", ">>", "cout", "<<", "n", "/", "10"],
+        solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    cout << n / 10 << endl;\n    return 0;\n}`
+    },
+    {
+        title: "Suma de Dígitos con Bucle while",
+        description: "Escribe un programa que lea un número entero positivo 'n' y, mediante un bucle 'while (n > 0)', obtenga y sume cada uno de sus dígitos. Al finalizar, imprime la suma total.",
+        hint: "Dentro del bucle extrae el dígito con '% 10', súmalo a un acumulador e inmediatamente divide 'n' entre 10.",
+        expectedKeywords: ["int", "n", "suma", "=", "0", "while", "n", ">", "0", "n", "%", "10", "/=", "10", "cout"],
+        solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    int suma = 0;\n    while (n > 0) {\n        suma += n % 10;\n        n /= 10;\n    }\n    cout << suma << endl;\n    return 0;\n}`
+    },
+    {
+        title: "Número Invertido",
+        description: "Escribe un programa completo en C++ que lea un número entero positivo 'n' y devuelva el número con sus dígitos completamente invertidos.",
+        hint: "Usa la fórmula matemática de reconstrucción inversa: 'invertido = invertido * 10 + digito' dentro de un bucle while.",
+        expectedKeywords: ["int", "invertido", "=", "0", "while", "n", ">", "0", "n", "%", "10", "n", "/", "10", "cout"],
+        solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    int invertido = 0;\n    while (n > 0) {\n        int digito = n % 10;\n        invertido = invertido * 10 + digito;\n        n = n / 10;\n    }\n    cout << invertido << endl;\n    return 0;\n}`
+    }
+];
+
+  let currentQuestionIndex = 0;
+    let score = 0;
+
+    const userCodeInput = document.getElementById('user-code');
+    const feedbackBox = document.getElementById('feedback');
+    const hintBox = document.getElementById('hint-box');
+    const checkBtn = document.getElementById('check-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Función auxiliar para convertir el número de aciertos a escala sobre 100
+    function getPuntos() {
+        if (questions.length === 0) return 0;
+        return Math.round((score / questions.length) * 100);
+    }
+
+    // Función para convertir símbolos de código en texto seguro para HTML
+    function escaparHTML(texto) {
+        return texto
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-number').innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+        document.getElementById('question-title').innerText = q.title;
+        document.getElementById('question-desc').innerText = q.description;
+        document.getElementById('current-score').innerText = getPuntos();
+
+        // Limpieza de interfaz para la nueva pregunta
+        userCodeInput.value = '';
+        feedbackBox.innerHTML = '';
+        feedbackBox.classList.add('hidden');
+        hintBox.classList.add('hidden');
+        
+        checkBtn.classList.remove('hidden');
+        nextBtn.classList.add('hidden');
+
+        const progress = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function normalizeCode(str) {
+        return str.replace(/\s+/g, ' ').trim();
+    }
+
+    function checkAnswer() {
+        const userCode = userCodeInput.value;
+        const q = questions[currentQuestionIndex];
+        
+        const normalizedUser = normalizeCode(userCode);
+        const normalizedSol = normalizeCode(q.solution);
+
+        const missingKeywords = q.expectedKeywords.filter(kw => !userCode.includes(kw));
+
+        feedbackBox.classList.remove('hidden');
+
+        const solucionEscapada = escaparHTML(q.solution);
+        const palabrasFaltantesEscapadas = missingKeywords.map(escaparHTML).join(', ');
+
+        if (missingKeywords.length === 0 || normalizedUser === normalizedSol) {
+            score++;
+            document.getElementById('current-score').innerText = getPuntos();
+            feedbackBox.className = "mt-4 p-4 rounded-lg text-sm border bg-emerald-950/60 border-emerald-700 text-emerald-300";
+            feedbackBox.innerHTML = `
+                <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> ¡Excelente! El código es correcto.</div>
+                <pre class="mt-2 p-2 bg-slate-950 rounded border border-emerald-800 text-emerald-400 code-font text-xs">${solucionEscapada}</pre>
+            `;
+        } else {
+            feedbackBox.className = "mt-4 p-4 rounded-lg text-sm border bg-rose-950/60 border-rose-700 text-rose-300";
+            feedbackBox.innerHTML = `
+                <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Faltan elementos clave en tu código.</div>
+                <p class="mt-1 text-xs text-rose-300/80">Asegúrate de incluir: <code class="bg-slate-900 px-1 py-0.5 rounded border border-rose-800">${palabrasFaltantesEscapadas}</code></p>
+                <div class="mt-2 font-semibold text-xs text-slate-300">Solución de referencia:</div>
+                <pre class="mt-1 p-2 bg-slate-950 rounded border border-rose-800/60 text-slate-300 code-font text-xs">${solucionEscapada}</pre>
+            `;
+        }
+
+        checkBtn.classList.add('hidden');
+        nextBtn.classList.remove('hidden');
+    }
+
+    function toggleHint() {
+        const q = questions[currentQuestionIndex];
+        hintBox.innerText = q.hint;
+        hintBox.classList.toggle('hidden');
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('result-card').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${getPuntos()} / 100 pts`;
+        document.getElementById('progress-bar').style.width = '100%';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('result-card').classList.add('hidden');
+        document.getElementById('quiz-card').classList.remove('hidden');
+        loadQuestion();
+    }
+
+    // Inicializa el quiz al cargar la página
+    loadQuestion();
+</script>

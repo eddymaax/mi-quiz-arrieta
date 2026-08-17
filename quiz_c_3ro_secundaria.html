@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Código C++</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .code-font {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 py-4 px-6 shadow-md">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid me-2 fa-code text-blue-400 text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-wide text-white">Quiz de Código C++ Base </h1>
+            </div>
+                <div id="score-display" class="bg-slate-700 px-4 py-1.5 rounded-full text-sm font-semibold text-blue-300 border border-slate-600">
+                    Puntuación: <span id="current-score">0</span> / 100 pts
+                </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+
+        <!-- Quiz Container -->
+        <div id="quiz-card" class="bg-slate-800 rounded-xl border border-slate-700 shadow-2xl overflow-hidden p-6">
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-700 h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Header -->
+            <div class="mb-4">
+                <span id="question-number" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800/50 px-3 py-1 rounded-full">Pregunta 1</span>
+                <h2 id="question-title" class="text-lg sm:text-xl font-semibold text-white mt-3"></h2>
+                <p id="question-desc" class="text-slate-400 text-sm mt-1"></p>
+            </div>
+
+            <!-- Code Input Area -->
+            <div class="mt-4">
+                <label class="block text-xs font-medium text-slate-400 mb-2">Escribe exactamente las líneas de código C++ requeridas:</label>
+                <textarea id="user-code" rows="7" spellcheck="false" class="w-full bg-slate-950 text-emerald-400 code-font p-4 rounded-lg border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-y text-sm leading-relaxed" placeholder="// Escribe tu código C++ aquí..."></textarea>
+            </div>
+
+            <!-- Feedback Box -->
+            <div id="feedback" class="hidden mt-4 p-4 rounded-lg text-sm border"></div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex flex-wrap justify-between items-center gap-3">
+                <button id="hint-btn" onclick="toggleHint()" class="text-slate-400 hover:text-slate-200 text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-regular fa-lightbulb text-yellow-400"></i> Pista
+                </button>
+                <div class="flex gap-3 ml-auto">
+                    <button id="check-btn" onclick="checkAnswer()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-lg shadow-blue-600/20">
+                        Comprobar Código
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2 rounded-lg text-sm transition shadow-lg shadow-emerald-600/20">
+                        Siguiente Pregunta <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hint Display -->
+            <div id="hint-box" class="hidden mt-3 p-3 bg-slate-900/80 border border-yellow-500/30 rounded-lg text-xs text-yellow-300"></div>
+        </div>
+
+        <!-- Completion Card -->
+        <div id="result-card" class="hidden bg-slate-800 rounded-xl border border-slate-700 shadow-2xl p-8 text-center">
+            <div class="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/40 text-2xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">¡Quiz Completado!</h2>
+            <p class="text-slate-400 text-sm mb-6">Has demostrado tus conocimientos sobre la estructura base de C++.</p>
+            <div class="text-3xl font-extrabold text-blue-400 mb-6" id="final-score">0 / 0</div>
+            <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition shadow-lg shadow-blue-600/20">
+                Reiniciar Quiz
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-800">
+        Quiz interactivo de código C++ — Colegio Arrieta - Programación — 2026.
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                title: "Estructura Base del Código",
+                description: "Escribe la estructura base completa de un programa en C++ que incluya la biblioteca iostream, la instrucción para usar el espacio de nombres estándar 'std' globalmente y la función main retornando 0 de manera exitosa.",
+                hint: "Debe incluir #include <iostream>, using namespace std;, int main() { y return 0; }",
+                expectedKeywords: ["#include", "<iostream>", "using", "namespace", "std;", "int", "main", "return", "0"],
+                solution: `#include <iostream>\nusing namespace std;\nint main() {\n    return 0;\n}`
+            },
+            {
+                title: "Entrada y Salida Básica",
+                description: "Declara una variable entera llamada 'numero'. Lee su valor desde el teclado con 'cin' y luego usa 'cout' para mostrar el texto 'El numero ingresado es: ' seguido del valor de la variable con un salto de línea.",
+                hint: "Declara 'int numero;', usa 'cin >> numero;' para capturar el dato y 'cout << ... << endl;' para imprimir.",
+                expectedKeywords: ["int", "numero;", "cin", ">>", "cout", "<<", "endl;"],
+                solution: `int numero;\ncin >> numero;\ncout << "El numero ingresado es: " << numero << endl;`
+            },
+            {
+                title: "Declaración y Tipos de Datos Básicos",
+                description: "Declara tres variables inicializadas: una variable entera 'puntos' con el valor 10, una variable decimal de precisión simple 'nota' con el valor 51.0f, y una cadena de texto 'usuario' con el valor 'admin'.",
+                hint: "Usa los tipos 'int', 'float' (con f al final) y 'string'. Recuerda las comillas dobles para el texto.",
+                expectedKeywords: ["int", "puntos", "10", "float", "nota", "51.0f", "string", "usuario", "\"admin\""],
+                solution: `int puntos = 10;\nfloat nota = 51.0f;\nstring usuario = "admin";`
+            },
+            {
+                title: "Sensor de Cristales: Validación de Rango",
+                description: "El laboratorio espacial requiere validar los cristales antes de procesarlos. Escribe un programa que lea un número entero 'n' (el nivel de pureza del cristal). Utilizando una estructura condicional y el operador lógico AND (&&), verifica si 'n' se encuentra en el rango permitido de 0 a 9999 inclusive. Si está dentro del rango, imprime 'CRISTAL VALIDO'; de lo contrario, muestra 'RECHAZADO'.",
+                hint: "Plantea tu condición evaluando ambos extremos a la vez: (n >= 0 && n <= 9999) dentro de un bloque if-else.",
+                expectedKeywords: ["int", "n;", "cin", ">>", "if", "n", ">=", "0", "&&", "<=", "9999", "CRISTAL VALIDO", "else", "RECHAZADO"],
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    if (n >= 0 && n <= 9999) {\n        cout << "CRISTAL VALIDO" << endl;\n    } else {\n        cout << "RECHAZADO" << endl;\n    }\n    return 0;\n}`
+            },
+            {
+                title: "Carga de Baterías del Robot (Bucle while decreciente)",
+                description: "Un robot de exploración espacial tiene 'n' celdas de energía. Escribe un programa que lea primero la cantidad de celdas 'n'. Luego, utilizando un bucle 'while (n--)', lee en cada repetición la cantidad de carga de cada celda y acumula el total en una variable. Al finalizar el bucle, muestra la energía total acumulada.",
+                hint: "Declara 'int n;' para leer la cantidad, inicializa 'int total = 0;' y usa la condición de control 'while (n--)' para leer y sumar consecutivamente la carga de cada celda.",
+                expectedKeywords: ["int", "n", "cin", ">>", "int", "total", "=", "0", "while", "n--", "+=", "cout"],
+                solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    int total = 0;\n    while (n--) {\n        int carga;\n        cin >> carga;\n        total += carga;\n    }\n    cout << total << endl;\n    return 0;\n}`
+            },
+            {
+                title: "Generador de Nombres de Streamers",
+                description: "Escribe un programa que lea el nombre completo del usuario en una línea (incluyendo espacios) y su videojuego favorito en la siguiente (una sola palabra). Almacena el alias artístico concatenándolos con el formato '[NombreCompleto]_Pro_[Videojuego]' y muéstralo en pantalla.",
+                hint: "Usa 'getline(cin, nombre_completo)' para leer el nombre con espacios, 'cin >> videojuego' para el juego, y únelos usando el operador '+'.",
+                expectedKeywords: ["string", "getline(cin,", "cin", ">>", "+", "\"_Pro_\"", "cout"],
+                solution: `string nombre_completo;\nstring videojuego;\ngetline(cin, nombre_completo);\ncin >> videojuego;\nstring alias = nombre_completo + "_Pro_" + videojuego;\ncout << alias << endl;`
+            },
+            {
+                title: "Filtro Antispam de Discord (.empty y .length)",
+                description: "Escribe un programa que lea un mensaje del chat con getline. Si el mensaje está completamente vacío, muestra 'CHAT SILENCIOSO'. Si contiene texto, calcula el tiempo total de procesamiento en milisegundos multiplicando la longitud de la cadena por 3, e imprime el tiempo con el formato '[tiempo] ms'.",
+                hint: "Usa 'mensaje.empty()' para comprobar si está vacío y 'mensaje.length()' para obtener el tamaño.",
+                expectedKeywords: ["getline(cin,", "if", "mensaje.empty()", "CHAT SILENCIOSO", "else", "mensaje.length()", "3", "\" ms\""],
+                solution: `string mensaje;\ngetline(cin, mensaje);\nif (mensaje.empty()) {\n    cout << "CHAT SILENCIOSO" << endl;\n} else {\n    int tiempo = mensaje.length() * 3;\n    cout << tiempo << " ms" << endl;\n}`
+            },
+            {
+                title: "Detector de Toxicidad en Chat (.find y npos)",
+                description: "Escribe un programa que lea una frase completa del chat y una palabra sospechosa. Usa el método '.find()' de las cadenas para verificar si la palabra está presente en la frase. Si se encuentra, imprime el índice donde inicia; si no se encuentra (igual a string::npos), muestra 'CHAT LIMPIO'.",
+                hint: "Usa 'frase.find(palabra)' y compáralo con la constante 'string::npos'.",
+                expectedKeywords: ["getline(cin,", "cin", ">>", "find", "string::npos", "!=", "CHAT LIMPIO"],
+                solution: `string frase;\nstring palabra;\ngetline(cin, frase);\ncin >> palabra;\nsize_t posicion = frase.find(palabra);\nif (posicion != string::npos) {\n    cout << posicion << endl;\n} else {\n    cout << "CHAT LIMPIO" << endl;\n}`
+            },
+            {
+                title: "Hackeo del Tag de Clan (.replace)",
+                description: "Escribe un programa que lea una cadena de texto representando el nombre de un clan. Utiliza el método '.replace()' para sustituir los primeros 3 caracteres (del índice 0 al 2) con el tag de siglas oficiales 'GG-' y muestra el resultado en pantalla.",
+                hint: "La sintaxis es 'clan.replace(0, 3, \"GG-\");'.",
+                expectedKeywords: ["string", "clan", "cin", ">>", "replace(0,", "3,", "\"GG-\")", "cout"],
+                solution: `string clan;\ncin >> clan;\nclan.replace(0, 3, "GG-");\ncout << clan << endl;`
+            },
+            {
+                title: "Control de Calidad: Clasificación de Frutas",
+                description: "En una fábrica de conservas, una máquina clasificadora procesa frutas según el tamaño de sus nombres para asegurar que quepan en los envases. Escribe un programa que lea un entero 'n' (la cantidad de frutas). Luego, usando un bucle, lee el nombre de cada 'fruta' (una sola palabra). Si la longitud del nombre de la fruta está entre 4 y 6 caracteres inclusive, muestra 'CORRECTO'; de lo contrario, muestra 'TAMAÑO FUERA DE LO PEDIDO'.",
+                hint: "Usa un bucle 'while (n--)' o 'for'. En cada iteración, lee la palabra y evalúa su tamaño con 'fruta.length() >= 4 && fruta.length() <= 6'.",
+                expectedKeywords: ["int", "n", "cin", ">>", "while", "n--", "string", "fruta", "length()", "&&", ">= 4", "<= 6", "CORRECTO", "TAMAÑO FUERA DE LO PEDIDO"],
+                solution: `#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int n;\n    cin >> n;\n    while (n--) {\n        string fruta;\n        cin >> fruta;\n        if (fruta.length() >= 4 && fruta.length() <= 6) {\n            cout << "CORRECTO" << endl;\n        } else {\n            cout << "TAMAÑO FUERA DE LO PEDIDO" << endl;\n        }\n    }\n    return 0;\n}`
+            }
+        ];
+
+  let currentQuestionIndex = 0;
+    let score = 0;
+
+    const userCodeInput = document.getElementById('user-code');
+    const feedbackBox = document.getElementById('feedback');
+    const hintBox = document.getElementById('hint-box');
+    const checkBtn = document.getElementById('check-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Función auxiliar para convertir el número de aciertos a escala sobre 100
+    function getPuntos() {
+        if (questions.length === 0) return 0;
+        return Math.round((score / questions.length) * 100);
+    }
+
+    // Función para convertir símbolos de código en texto seguro para HTML
+    function escaparHTML(texto) {
+        return texto
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        document.getElementById('question-number').innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+        document.getElementById('question-title').innerText = q.title;
+        document.getElementById('question-desc').innerText = q.description;
+        document.getElementById('current-score').innerText = getPuntos();
+
+        // Limpieza de interfaz para la nueva pregunta
+        userCodeInput.value = '';
+        feedbackBox.innerHTML = '';
+        feedbackBox.classList.add('hidden');
+        hintBox.classList.add('hidden');
+        
+        checkBtn.classList.remove('hidden');
+        nextBtn.classList.add('hidden');
+
+        const progress = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+    }
+
+    function normalizeCode(str) {
+        return str.replace(/\s+/g, ' ').trim();
+    }
+
+    function checkAnswer() {
+        const userCode = userCodeInput.value;
+        const q = questions[currentQuestionIndex];
+        
+        const normalizedUser = normalizeCode(userCode);
+        const normalizedSol = normalizeCode(q.solution);
+
+        const missingKeywords = q.expectedKeywords.filter(kw => !userCode.includes(kw));
+
+        feedbackBox.classList.remove('hidden');
+
+        const solucionEscapada = escaparHTML(q.solution);
+        const palabrasFaltantesEscapadas = missingKeywords.map(escaparHTML).join(', ');
+
+        if (missingKeywords.length === 0 || normalizedUser === normalizedSol) {
+            score++;
+            document.getElementById('current-score').innerText = getPuntos();
+            feedbackBox.className = "mt-4 p-4 rounded-lg text-sm border bg-emerald-950/60 border-emerald-700 text-emerald-300";
+            feedbackBox.innerHTML = `
+                <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i> ¡Excelente! El código es correcto.</div>
+                <pre class="mt-2 p-2 bg-slate-950 rounded border border-emerald-800 text-emerald-400 code-font text-xs">${solucionEscapada}</pre>
+            `;
+        } else {
+            feedbackBox.className = "mt-4 p-4 rounded-lg text-sm border bg-rose-950/60 border-rose-700 text-rose-300";
+            feedbackBox.innerHTML = `
+                <div class="font-bold flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Faltan elementos clave en tu código.</div>
+                <p class="mt-1 text-xs text-rose-300/80">Asegúrate de incluir: <code class="bg-slate-900 px-1 py-0.5 rounded border border-rose-800">${palabrasFaltantesEscapadas}</code></p>
+                <div class="mt-2 font-semibold text-xs text-slate-300">Solución de referencia:</div>
+                <pre class="mt-1 p-2 bg-slate-950 rounded border border-rose-800/60 text-slate-300 code-font text-xs">${solucionEscapada}</pre>
+            `;
+        }
+
+        checkBtn.classList.add('hidden');
+        nextBtn.classList.remove('hidden');
+    }
+
+    function toggleHint() {
+        const q = questions[currentQuestionIndex];
+        hintBox.innerText = q.hint;
+        hintBox.classList.toggle('hidden');
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('result-card').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${getPuntos()} / 100 pts`;
+        document.getElementById('progress-bar').style.width = '100%';
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById('result-card').classList.add('hidden');
+        document.getElementById('quiz-card').classList.remove('hidden');
+        loadQuestion();
+    }
+
+    // Inicializa el quiz al cargar la página
+    loadQuestion();
+</script>
